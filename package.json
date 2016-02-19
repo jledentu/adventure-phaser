@@ -1,0 +1,27 @@
+{
+  "name": "adventure-phaser",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "serve": "webpack-dev-server --content-base dist --port 3000"
+  },
+  "author": "Jérémie Ledentu <jledentu@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-core": "^6.5.2",
+    "babel-loader": "^6.2.2",
+    "babel-preset-es2015": "^6.5.0",
+    "babel-preset-react": "^6.5.0",
+    "file-loader": "^0.8.5",
+    "html-webpack-plugin": "^2.9.0",
+    "json-loader": "^0.5.4",
+    "p2": "^0.7.1",
+    "phaser": "^2.4.5",
+    "script-loader": "^0.6.1",
+    "webpack": "^1.12.13",
+    "webpack-dev-server": "^1.14.1"
+  }
+}
