@@ -39,7 +39,8 @@ module.exports = {
     alias: {
       'phaser': phaser,
       'pixi.js': pixi,
-      'assets': path.join(__dirname, '/assets/')
+      'assets': path.join(__dirname, '/assets/'),
+      'scenes': path.join(__dirname, '/scenes/')
     }
   },
   sassLoader: {

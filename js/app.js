@@ -12,15 +12,11 @@ class Game extends Phaser.Game {
   constructor() {
     super(800, 600, Phaser.AUTO, '');
 
-    console.log(states);
-
     states.forEach(function(state) {
-      console.log(state);
       this.state.add(state.getName(), new state());
     }.bind(this));
 
-    this.state.add('load', new LoadState());
-    this.state.start('load');
+    this.state.start('game');
   }
 }
 
