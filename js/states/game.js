@@ -1,8 +1,11 @@
 var Phaser = require('phaser');
+var Navigator = require('../navigator.js');
+var Polygon = require('../pathfinding/polygon.js');
 
 class GameState extends Phaser.State {
   constructor() {
     super();
+    this.navigator = new Navigator();
   }
 
   preload() {
@@ -11,27 +14,36 @@ class GameState extends Phaser.State {
   }
 
   create() {
-    this.game.input.onTap.add(this.onTap.bind(this), this);
+    this.game.input.onTap.add(this.onTap, this);
   }
 
   render() {
     this.graphics.clear();
 
-    this.drawWalkableArea();
-    this.drawTriangles();
+    this._drawWalkableArea();
+    this.graphics.lineStyle(1, 0x00FF00, 1.0);
+
+    if (this.navigator._graph.edges) {
+      for (let [vertex, targetVertexes] of this.navigator._graph.edges) {
+        for (let i = 0; i < targetVertexes.length; i++) {
+          this.graphics.moveTo(this.navigator._graph.nodes[vertex].x, this.navigator._graph.nodes[vertex].y);
+          this.graphics.lineTo(this.navigator._graph.nodes[targetVertexes[i]].x, this.navigator._graph.nodes[targetVertexes[i]].y);
+        }
+      }
+    }
   }
 
   loadScene(scene) {
     this.scene = require(`scenes/${scene}.json`);
 
-    let triangles = PIXI.EarCut.Triangulate(this.scene.walkable);
-    this.walkTriangles = triangles.map(index => new Phaser.Point(this.scene.walkable[index * 2], this.scene.walkable[index * 2 + 1]));
+    this.polygon = new Polygon(this.scene.walkable);
+    this.navigator.polygon = this.polygon;
   }
 
   /**
    * Draw the walkable area.
    */
-  drawWalkableArea() {
+  _drawWalkableArea() {
     if (this.scene && this.scene.walkable) {
       this.graphics.beginFill(0xFF3300, 0.0);
       this.graphics.lineStyle(1, 0xFF3300, 1.0);
@@ -40,23 +52,12 @@ class GameState extends Phaser.State {
     }
   }
 
-  drawTriangles() {
-    if (this.walkTriangles) {
-      this.graphics.beginFill(0x0033FF, 0.0);
-      this.graphics.lineStyle(1, 0x0033FF, 1.0);
-
-      for (let i = 0; i < this.walkTriangles.length - 2; i = i + 3) {
-        this.graphics.drawPolygon([this.walkTriangles[i], this.walkTriangles[i + 1], this.walkTriangles[i + 2]]);
-      }
-      this.graphics.drawTriangle(this.walkTriangles);
-      this.graphics.endFill();
-    }
-  }
-
   onTap(pointer, doubleTap) {
     console.log(pointer);
     console.log(this.game.input.x);
     console.log(this.game.input.y);
+
+    this.navigator.navTo(this.game.input.x, this.game.input.y);
   }
 
   static getName() {

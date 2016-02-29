@@ -1,7 +1,6 @@
 require('pixi.js');
 global.p2 = require('p2');
-var Phaser = require('phaser');
-var LoadState = require('./states/load');
+global.Phaser = require('phaser');
 
 function requireAll(requireContext) {
   return requireContext.keys().map(requireContext);
