@@ -48,7 +48,12 @@ class VisibilityGraph {
     for (let i = 0; i < this.nodes.length - 1; i++) {
 
       if (this._polygon.lineOfSight({x: x, y: y}, this.nodes[i])) {
-        this.edges.get(this.nodes.length - 1).push({target: i, distance: this._getDistance(x, y, this.nodes[i].x, this.nodes[i].y)});
+        if (!this.edges.has(i)) {
+          this.edges.set(i, []);
+        }
+        let distance = this._getDistance(x, y, this.nodes[i].x, this.nodes[i].y);
+        this.edges.get(i).push({target: this.nodes.length - 1, distance: distance});
+        this.edges.get(this.nodes.length - 1).push({target: i, distance: distance});
       }
     }
 
@@ -88,6 +93,13 @@ class VisibilityGraph {
   getShortestPath() {
     let openList   = [];
 		let closedList = [];
+
+    if (this.start === undefined || this.end === undefined) {
+      return;
+    }
+
+    console.log(this.edges);
+
 		openList.push({node: this.start, f: 0, g: 0, h: 0, parent: null});
 
     while (openList.length > 0) {
@@ -109,7 +121,7 @@ class VisibilityGraph {
       }
 
       for (let adjacent of this.edges.get(currentNode.node)) {
-        let cost = currentNode.node.g + adjacent.distance;
+        let cost = currentNode.g + adjacent.distance;
 
         let adjIndexInOpen = openList.findIndex(x => x.node === adjacent.target);
         if (adjIndexInOpen >= 0 && cost < openList[adjIndexInOpen].g) {
@@ -117,7 +129,7 @@ class VisibilityGraph {
         }
 
         let adjIndexInClosed = closedList.findIndex(x => x.node === adjacent.target);
-        if (adjIndexInClosed >= 0 && cost < openList[adjIndexInOpen].g) {
+        if (adjIndexInClosed >= 0 && cost < closedList[adjIndexInClosed].g) {
           closedList.splice(adjIndexInClosed, 1);
         }
 
@@ -125,23 +137,22 @@ class VisibilityGraph {
           openList.push({
             node: adjacent.target,
             g: cost,
-            f: cost + this._heuristic(this.nodes[adjacent], this.nodes[this.end]),
+            f: cost + this._heuristic(this.nodes[adjacent.target], this.nodes[this.end]),
             parent: currentNode.node
           });
         }
       }
-    }
 
-    console.log(openList);
-    console.log(closedList);
+      console.log(JSON.stringify(openList));
+    }
   }
 
   _getDistance(aX, aY, bX, bY) {
     return Math.abs(bX - aX) + Math.abs(bY - aY);
   }
 
-  _getHeuristic(pos0, pos1) {
-    return this._getdistance(pos0.x, pos0.y, pos1.x, pos1.y);
+  _heuristic(pos0, pos1) {
+    return this._getDistance(pos0.x, pos0.y, pos1.x, pos1.y);
   }
 }
 

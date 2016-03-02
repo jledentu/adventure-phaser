@@ -2,12 +2,12 @@ var VisibilityGraph = require('./pathfinding/visibility-graph.js');
 
 class Navigator {
   constructor() {
-
   }
 
   set polygon(polygon) {
     this._polygon = polygon;
     this._graph = new VisibilityGraph(polygon);
+    this.setStart(20, 20);
   }
 
   setStart(x, y) {
