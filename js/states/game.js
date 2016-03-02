@@ -24,10 +24,10 @@ class GameState extends Phaser.State {
     this.graphics.lineStyle(1, 0x00FF00, 1.0);
 
     if (this.navigator._graph.edges) {
-      for (let [vertex, targetVertexes] of this.navigator._graph.edges) {
-        for (let i = 0; i < targetVertexes.length; i++) {
+      for (let [vertex, edges] of this.navigator._graph.edges) {
+        for (let i = 0; i < edges.length; i++) {
           this.graphics.moveTo(this.navigator._graph.nodes[vertex].x, this.navigator._graph.nodes[vertex].y);
-          this.graphics.lineTo(this.navigator._graph.nodes[targetVertexes[i]].x, this.navigator._graph.nodes[targetVertexes[i]].y);
+          this.graphics.lineTo(this.navigator._graph.nodes[edges[i].target].x, this.navigator._graph.nodes[edges[i].target].y);
         }
       }
     }

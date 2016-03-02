@@ -18,6 +18,8 @@ class Navigator {
   navTo(x, y) {
     this.end = {x: x, y: y};
     this._graph.setEndNode(x, y);
+
+    this._graph.getShortestPath();
   }
 }
 
