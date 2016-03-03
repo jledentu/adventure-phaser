@@ -1,10 +1,11 @@
+var UndirectedGraph = require('./undirected-graph.js');
 var Polygon = require('./polygon.js');
 
-class VisibilityGraph extends Graph {
+class VisibilityGraph extends UndirectedGraph {
   constructor(polygon) {
 
-    this.nodes = [];
-    this.edges = new Map();
+    super();
+
     this.start = undefined;
     this.end = undefined;
 
@@ -37,50 +38,29 @@ class VisibilityGraph extends Graph {
     }
   }
 
-  addNode(x, y) {
-    this.nodes.push({x: x, y: y});
-    this.edges.set(this.nodes.length - 1, []);
+  addNode(id, data) {
+
+    super.addNode(id, data);
 
     // Get convex points
     let convexVertices = this._polygon.getConvexVertices();
 
-    for (let i = 0; i < this.nodes.length - 1; i++) {
+    for (let node of this._nodes.entries()) {
 
-      if (this._polygon.lineOfSight({x: x, y: y}, this.nodes[i])) {
-        if (!this.edges.has(i)) {
-          this.edges.set(i, []);
-        }
-        let distance = this._getDistance(x, y, this.nodes[i].x, this.nodes[i].y);
-        this.edges.get(i).push({target: this.nodes.length - 1, distance: distance});
-        this.edges.get(this.nodes.length - 1).push({target: i, distance: distance});
+      if (id !== node[0] && this._polygon.lineOfSight({x: data.x, y: data.y}, node[1])) {
+        this.addEdge(id, node[0], {distance: this._getDistance(data.x, data.y, node[1].x, node[1].y)});
       }
-    }
-
-    return this.nodes.length - 1;
-  }
-
-  removeNode(index) {
-    this.nodes.splice(index, 1);
-
-    // Remove from edges
-    for (let i = 0; i < this.edges.length - 1; i++) {
-      let edges = this.edges.get(i);
-
-      let found = edges.indexOf(index);
-      edges.splice(found, 1);
     }
   }
 
   setStartNode(x, y) {
 
-    this.removeNode('start');
-    this.addNode('start', {x: x, y: y});
+    this.setNode('start', {x: x, y: y});
   }
 
   setEndNode(x, y) {
 
-    this.removeNode('end');
-    this.addNode('end', {x: x, y: y});
+    this.setNode('end', {x: x, y: y});
   }
 
   getShortestPath() {

@@ -23,14 +23,14 @@ class GameState extends Phaser.State {
     this._drawWalkableArea();
     this.graphics.lineStyle(1, 0x00FF00, 1.0);
 
-    if (this.navigator._graph.edges) {
-      for (let [vertex, edges] of this.navigator._graph.edges) {
+    /*if (this.navigator._graph._edges) {
+      for (let [vertex, edges] of this.navigator._graph._edges) {
         for (let i = 0; i < edges.length; i++) {
           this.graphics.moveTo(this.navigator._graph.nodes[vertex].x, this.navigator._graph.nodes[vertex].y);
           this.graphics.lineTo(this.navigator._graph.nodes[edges[i].target].x, this.navigator._graph.nodes[edges[i].target].y);
         }
       }
-    }
+    }*/
   }
 
   loadScene(scene) {

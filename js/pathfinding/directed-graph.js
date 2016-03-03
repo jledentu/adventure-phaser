@@ -1,18 +1,29 @@
-class Graph {
+class DirectedGraph {
   constructor() {
     this._nodes = new Map();
     this._edges = new Map();
   }
 
   addNode(id, data) {
+    if (this.isNode(id)) {
+      return false;
+    }
     this._nodes.set(id, data);
     this._edges.set(id, []);
+    return true;
   }
 
-  addEdge(u, v, p, data) {
+  setNode(id, data) {
+    if (this.isNode(id)) {
+      this.removeNode(id);
+    }
+    this.addNode(id, data);
+  }
+
+  addEdge(u, v, data) {
     if (this.isNode(u) && this.isNode(v)) {
-      this._edges.get(u).push({target: v, p: p, data: data});
-      this._edges.get(v).push({target: u, p: p, data: data});
+      this._edges.get(u).push({target: v, data: data});
+      return true;
     }
   }
 
@@ -24,14 +35,29 @@ class Graph {
     return this.isNode(u) && this.isNode(v) && this._edges.get(u).find(e => e.target === v);
   }
 
+  getNodeData(id) {
+    return this._nodes.get(id);
+  }
+
+  getEdgeData(u, v) {
+    if (this.isNode(u) && this.isNode(v)) {
+      let edge = this._edges.get(u).find(e => e.target === v);
+
+      if (edge) {
+        return edge.data;
+      }
+    }
+    return undefined;
+  }
+
   removeNode(id) {
     if (this._nodes.has(id)) {
       this._nodes.delete(id);
+      this._edges.delete(id);
+      return true;
     }
 
-    if (this._edges.has(id)) {
-      this._edges.delete(id);
-    }
+    return false;
   }
 
   removeEdge(u, v) {
@@ -43,13 +69,11 @@ class Graph {
         this._edges.get(u).splice(index, 1);
       }
 
-      index = this._edges.get(v).findIndex(e => e.target === u);
-
-      if (index !== -1) {
-        this._edges.get(v).splice(index, 1);
-      }
+      return true;
     }
+
+    return false;
   }
 }
 
-module.exports = Graph;
+module.exports = DirectedGraph;
