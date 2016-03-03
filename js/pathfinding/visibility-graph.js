@@ -1,6 +1,6 @@
 var Polygon = require('./polygon.js');
 
-class VisibilityGraph {
+class VisibilityGraph extends Graph {
   constructor(polygon) {
 
     this.nodes = [];
@@ -17,10 +17,9 @@ class VisibilityGraph {
 
       for (let i = 0; i < convexVertices.length; i++) {
         let vIndex = convexVertices[i];
-        this.nodes.push(this._polygon.vertices[vIndex]);
-        this.edges.set(i, []);
+        this.addNode(i, this._polygon.vertices[vIndex]);
 
-        for (let j = i + 1; j < convexVertices.length; j++) {
+        for (let j = i - 1; j >= 0; j--) {
 
           let targetIndex = convexVertices[j];
 
@@ -30,7 +29,7 @@ class VisibilityGraph {
             let target = this._polygon.vertices[targetIndex];
 
             if (this._polygon.lineOfSight(source, target)) {
-              this.edges.get(i).push({target: j, distance: this._getDistance(source.x, source.y, target.x, target.y)});
+              this.addEdge(i, j, this._getDistance(source.x, source.y, target.x, target.y));
             }
           }
         }
@@ -74,20 +73,14 @@ class VisibilityGraph {
 
   setStartNode(x, y) {
 
-    if (this.start !== undefined) {
-      this.removeNode(this.start);
-    }
-
-    this.start = this.addNode(x, y);
+    this.removeNode('start');
+    this.addNode('start', {x: x, y: y});
   }
 
   setEndNode(x, y) {
 
-    if (this.end !== undefined) {
-      this.removeNode(this.end);
-    }
-
-    this.end = this.addNode(x, y);
+    this.removeNode('end');
+    this.addNode('end', {x: x, y: y});
   }
 
   getShortestPath() {
